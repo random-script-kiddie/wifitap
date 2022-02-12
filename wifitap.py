@@ -50,17 +50,17 @@ WEPKEY    = ""
 
 
 def usage(status=0):
-    print "Usage: wifitap -b <BSSID> [-o <iface>] [-i <iface>] [-s <SMAC>]"
-    print "                          [-w <WEP key> [-k <key id>]] [-d [-v]] [-h]"
-    print "     -b <BSSID>    specify BSSID for injection"
-    print "     -o <iface>    specify interface for injection (default: wlan0)"
-    print "     -i <iface>    specify interface for listening (default: wlan0)"
-    print "     -s <SMAC>     specify source MAC address for injected frames"
-    print "     -w <key>      WEP mode and key"
-    print "     -k <key id>   WEP key id (default: 0)"
-    print "     -d            activate debug"
-    print "     -v            verbose debugging"
-    print "     -h            this so helpful output"
+    print("Usage: wifitap -b <BSSID> [-o <iface>] [-i <iface>] [-s <SMAC>]")
+    print("                          [-w <WEP key> [-k <key id>]] [-d [-v]] [-h]")
+    print("     -b <BSSID>    specify BSSID for injection")
+    print("     -o <iface>    specify interface for injection (default: wlan0)")
+    print("     -i <iface>    specify interface for listening (default: wlan0)")
+    print("     -s <SMAC>     specify source MAC address for injected frames")
+    print("     -w <key>      WEP mode and key")
+    print("     -k <key id>   WEP key id (default: 0)")
+    print("     -d            activate debug")
+    print("     -v            verbose debugging")
+    print("     -h            this so helpful output")
     sys.exit(status)
 
 opts = getopt.getopt(sys.argv[1:],"b:o:i:s:w:k:dvh")
@@ -88,33 +88,33 @@ for opt,optarg in opts[0]:
 	usage()
 
 if not BSSID:
-    print "\nError: BSSID not defined\n"
+    print("\nError: BSSID not defined\n")
     usage()
 
 # Match and parse BSSID
 if re.match('^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$', BSSID):
     BSSID = BSSID.lower()
 else:
-    print "\nError: Wrong format for BSSID\n"
+    print("\nError: Wrong format for BSSID\n")
     usage ()
 
 # Support for source MAC spoofing for adhoc support
 if HAS_SMAC:
     if not SMAC:
-	print "\nError: SMAC not defined\n"
+	print("\nError: SMAC not defined\n")
 	usage()
     # Match and parse SMAC
     elif re.match('^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$', SMAC):
 	SMAC = SMAC.lower()
     else:
-	print "\nError: Wrong format for SMAC\n"
+	print("\nError: Wrong format for SMAC\n")
 	usage()
 
-print "IN_IFACE:   %s" % IN_IFACE
-print "OUT_IFACE:  %s" % OUT_IFACE
-print "BSSID:      %s" % BSSID
+print("IN_IFACE:   %s" % IN_IFACE)
+print("OUT_IFACE:  %s" % OUT_IFACE)
+print("BSSID:      %s" % BSSID)
 if HAS_SMAC:
-    print "SMAC:       %s" % SMAC
+    print("SMAC:       %s" % SMAC)
 
 if WEP:
     # Match and parse WEP key
@@ -126,28 +126,28 @@ if WEP:
     elif re.match ('^([0-9a-fA-F]{4}[-]){2}[0-9a-fA-F]{2}$', WEPKEY) or re.match ('^([0-9a-fA-F]{4}[-]){6}[0-9a-fA-F]{2}$', WEPKEY):
 	tmp_key = re.sub('-', '', WEPKEY)
     else:
-	print "\nError : Wrong format for WEP key\n"
+	print("\nError : Wrong format for WEP key\n")
 	usage()
     g = lambda x: chr(int(tmp_key[::2][x],16)*16+int(tmp_key[1::2][x],16))
     for i in range(len(tmp_key)/2):
 	conf.wepkey += g(i)
-    print "WEP key:    %s (%dbits)" % (WEPKEY, len(tmp_key)*4)
+    print("WEP key:    %s (%dbits)" % (WEPKEY, len(tmp_key)*4))
     if KEYID > 3 or KEYID < 0:
-	print "Key id:     %s (defaulted to 0 due to wrong -k argument)" % KEYID
+	print("Key id:     %s (defaulted to 0 due to wrong -k argument)" % KEYID)
 	KEYID = 0
     else:
-	print "Key id:     %s" % KEYID
+	print("Key id:     %s" % KEYID)
 else:
     if KEYID != 0:
-	print "WEP not activated, key id ignored"
+	print("WEP not activated, key id ignored")
 
 if not DEBUG:
     if VERB:
-	print "DEBUG not activated, verbosity ignored"
+	print("DEBUG not activated, verbosity ignored")
 else:
-    print "DEBUG activated"
+    print("DEBUG activated")
     if VERB:
-	print "Verbose debugging"
+	print("Verbose debugging")
 
 conf.iface = OUT_IFACE
 
@@ -160,7 +160,7 @@ s = conf.L2listen(iface = IN_IFACE,
 f = os.open("/dev/net/tun", os.O_RDWR)
 ifs = ioctl(f, TUNSETIFF, struct.pack("16sH", "wj%d", TUNMODE))
 ifname = ifs[:16].strip("\x00")
-print "Interface %s created. Configure it and use it" % ifname
+print("Interface %s created. Configure it and use it" % ifname)
 
 # Speed optimization si Scapy does not have to parse payloads
 Ether.payload_guess=[]
@@ -261,7 +261,7 @@ try:
 
 # Program killed
 except KeyboardInterrupt:
-    print "Stopped by user."
+    print("Stopped by user.")
 
 s.close()
 os.close(f)
